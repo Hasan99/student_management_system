@@ -60,64 +60,30 @@ def is_address_valid(address):  # address = "a-85"
         return False
 
 
-def add_student():
-    courses = {
-        "1": {"prefix": "AI", "course_name": "Artificial Intelligence"},
-        "2": {"prefix": "BC", "course_name": "Blockchain"},
-        "3": {"prefix": "CC", "course_name": "Cloud Computing"},
-    }
+def is_cnic_unique(cnic):
+    is_unique = True
+    with open("students_data.json") as f:
+        data = json.load(f)
+        for course in ["ai", "bc", "cc"]:
+            for student_id in data[course].keys():  # data[course].keys() = []
+                if data[course][student_id]["cnic"] == cnic:
+                    return False
+                else:
+                    is_unique = True
+        return is_unique
 
-    # while True:
-    #     print("\n*** ADD STUDENT ***")
-    #     print("\nSelect any 1 from the following courses:")
-    #     print("\nEnter 1 for Artificial Intelligence")
-    #     print("Enter 2 for Blockchain")
-    #     print("Enter 3 for Cloud Computing\n")
-    #     course_number = get_users_choice()
-    #
-    #     if course_number in courses.keys():  # keys = ["1","2","3"]
-    #         print("\nCourse:", courses[course_number]["course_name"])
-    #         student_name = input("Name: ")
-    #         if is_valid_name(student_name):
-    #             father_name = input("Father Name: ")
-    #             if is_valid_name(father_name):
-    #                 cnic = input("B. Form / CNIC: ")
-    #                 if is_valid_cnic(cnic):
-    #                     mobile_number = input("Mobile No: ")
-    #                     if is_mobile_valid(mobile_number):
-    #                         address = input("Address: ")
-    #                         if is_address_valid(address):
-    #                             break
-    #                         else:
-    #                             print(f"Invalid Address '{address}'")
-    #                             continue
-    #                     else:
-    #                         print(f"Invalid Mobile No. '{mobile_number}'")
-    #                         continue
-    #                 else:
-    #                     print(f"Invalid B. Form / CNIC '{cnic}'")
-    #                     continue
-    #             else:
-    #                 print(f"Invalid Name '{father_name}'")
-    #                 continue
-    #         else:
-    #             print(f"Invalid Name '{student_name}'")
-    #             continue
-    #     else:
-    #         print(f"Invalid Course Number '{course_number}'")
-    #         continue
 
-    course_number = "3"
+def generate_id(courses, course_number):
     student_id = courses[course_number]["prefix"]  # "AI"
     with open("students_data.json", "r") as f:
         data = json.load(f)
         print("data:", data, "type:", type(data))
         prefix = courses[course_number]["prefix"].lower()
-        list_of_students = data[prefix].keys()  # list_of_students = ["AI 1", "AI 2"]
+        list_of_students = data[prefix].keys()  # list_of_students = []
         number_of_students = len(list_of_students)
         if number_of_students == 0:
             student_id = student_id + " " + "1"
-            print(student_id)
+            return student_id
         else:
             numbers = []
             for key in list_of_students:  # key = "AI 1" 1
@@ -126,9 +92,84 @@ def add_student():
             new_number = max_number + 1
 
             student_id = student_id + " " + str(new_number)
-            print(student_id)
+            return student_id
 
-    print("\n*** Student Added Successfully :) ***")
+
+def add_student():
+    courses = {
+        "1": {"prefix": "AI", "course_name": "Artificial Intelligence"},
+        "2": {"prefix": "BC", "course_name": "Blockchain"},
+        "3": {"prefix": "CC", "course_name": "Cloud Computing"},
+    }
+
+    while True:
+        print("\n*** ADD STUDENT ***")
+        print("\nSelect any 1 from the following courses:")
+        print("\nEnter 1 for Artificial Intelligence")
+        print("Enter 2 for Blockchain")
+        print("Enter 3 for Cloud Computing\n")
+        course_number = get_users_choice()
+
+        if course_number in courses.keys():  # keys = ["1","2","3"]
+            print("\nCourse:", courses[course_number]["course_name"])
+            student_name = input("Name: ")
+            if is_valid_name(student_name):
+                father_name = input("Father Name: ")
+                if is_valid_name(father_name):
+                    cnic = input("B. Form / CNIC: ")
+                    if is_valid_cnic(cnic):
+                        cnic = get_formatted_cnic(cnic)
+                        if is_cnic_unique(cnic):
+                            mobile_number = input("Mobile No: ")
+                            if is_mobile_valid(mobile_number):
+                                address = input("Address: ")
+                                if is_address_valid(address):
+                                    break
+                                else:
+                                    print(f"Invalid Address '{address}'")
+                                    continue
+                            else:
+                                print(f"Invalid Mobile No. '{mobile_number}'")
+                                continue
+                        else:
+                            print(f"B. Form / CNIC '{cnic}' already exists!")
+                            continue
+                    else:
+                        print(f"Invalid B. Form / CNIC '{cnic}'")
+                        continue
+                else:
+                    print(f"Invalid Name '{father_name}'")
+                    continue
+            else:
+                print(f"Invalid Name '{student_name}'")
+                continue
+        else:
+            print(f"Invalid Course Number '{course_number}'")
+            continue
+
+    student_id = generate_id(courses, course_number)
+    student = {
+        "course": courses[course_number]["course_name"],
+        "name": student_name,
+        "father name": father_name,
+        "mobile no": mobile_number,
+        "cnic": cnic,
+        "address": address
+    }
+
+    with open("students_data.json") as f:
+        data = json.load(f)
+    with open("students_data.json", "w") as f:
+        data[courses[course_number]["prefix"].lower()][student_id] = student
+        json.dump(data, f)
+        print("\n*** Student Added Successfully :) ***")
+
+
+def get_formatted_cnic(cnic):  # cnic = "1234512345671"
+    part1 = cnic[:5]
+    part2 = cnic[5:12]
+    cnic = part1 + "-" + part2 + "-" + cnic[-1]
+    return cnic
 
 
 while True:
