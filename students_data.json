@@ -2,11 +2,11 @@
   "ai": {
     "AI 1": {
       "course": "Artificial Intelligence",
-      "name": "jameel",
-      "father name": "david",
-      "mobile no": "0333-1234567",
+      "name": "Laala",
+      "father name": "Afridi",
+      "mobile no": "0345-1234567",
       "cnic": "12345-1234567-1",
-      "address": "a-890"
+      "address": "Q-123"
     },
     "AI 2": {
       "course": "Artificial Intelligence",
@@ -20,11 +20,11 @@
   "bc": {
     "BC 1": {
       "course": "Blockchain",
-      "name": "Kareem",
-      "father name": "Darya Khan",
-      "mobile no": "0333-1234567",
+      "name": "Abdul Kareem",
+      "father name": "Abdul Raheem",
+      "mobile no": "0333-2312311",
       "cnic": "12345-1234567-3",
-      "address": "a-678"
+      "address": "W-123"
     }
   },
   "cc": {

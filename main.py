@@ -112,37 +112,7 @@ def add_student():
 
         if course_number in courses.keys():  # keys = ["1","2","3"]
             print("\nCourse:", courses[course_number]["course_name"])
-            student_name = input("Name: ")
-            if is_valid_name(student_name):
-                father_name = input("Father Name: ")
-                if is_valid_name(father_name):
-                    cnic = input("B. Form / CNIC: ")
-                    if is_valid_cnic(cnic):
-                        cnic = get_formatted_cnic(cnic)
-                        if is_cnic_unique(cnic):
-                            mobile_number = input("Mobile No: ")
-                            if is_mobile_valid(mobile_number):
-                                address = input("Address: ")
-                                if is_address_valid(address):
-                                    break
-                                else:
-                                    print(f"Invalid Address '{address}'")
-                                    continue
-                            else:
-                                print(f"Invalid Mobile No. '{mobile_number}'")
-                                continue
-                        else:
-                            print(f"B. Form / CNIC '{cnic}' already exists!")
-                            continue
-                    else:
-                        print(f"Invalid B. Form / CNIC '{cnic}'")
-                        continue
-                else:
-                    print(f"Invalid Name '{father_name}'")
-                    continue
-            else:
-                print(f"Invalid Name '{student_name}'")
-                continue
+            student_name, father_name, mobile_number, cnic, address = take_input("add")
         else:
             print(f"Invalid Course Number '{course_number}'")
             continue
@@ -172,25 +142,130 @@ def get_formatted_cnic(cnic):  # cnic = "1234512345671"
     return cnic
 
 
-while True:
-    print("*** STUDENT MANAGEMENT SYSTEM ***")
-    print("1. Enter 1 To Add")
-    print("2. Enter 2 To Update")
-    print("3. Enter 3 To Delete")
-    print("4. Enter 4 To View")
-    print("5. Enter 5 To Exit")
-    print("*********************************")
+def take_mobile_address():
+    while True:
+        mobile_number = input("Mobile No: ")
+        if is_mobile_valid(mobile_number):
+            address = input("Address: ")
+            if is_address_valid(address):
+                break
+            else:
+                print(f"Invalid Address '{address}'")
+                continue
+        else:
+            print(f"Invalid Mobile No. '{mobile_number}'")
+            continue
+    return mobile_number, address
+
+
+def take_input(operation, student_id=""):  # student_id = "AI 1"
+    while True:
+        student_name = input("Name: ")
+        if is_valid_name(student_name):
+            father_name = input("Father Name: ")
+            if is_valid_name(father_name):
+                cnic = input("B. Form / CNIC: ")
+                if is_valid_cnic(cnic):
+                    cnic = get_formatted_cnic(cnic)
+                    if is_cnic_unique(cnic):
+                        mobile_number, address = take_mobile_address()
+                    else:
+                        if operation == "update":
+                            with open("students_data.json") as f:
+                                data = json.load(f)
+                                if data[student_id.split()[0].lower()][student_id]["cnic"] == cnic:
+                                    mobile_number, address = take_mobile_address()
+                                    break
+                                else:
+                                    print(f"B. Form / CNIC '{cnic}' already exists!")
+                                    continue
+                        else:
+                            print(f"B. Form / CNIC '{cnic}' already exists!")
+                            continue
+                else:
+                    print(f"Invalid B. Form / CNIC '{cnic}'")
+                    continue
+            else:
+                print(f"Invalid Name '{father_name}'")
+                continue
+        else:
+            print(f"Invalid Name '{student_name}'")
+            continue
+
+    return student_name, father_name, mobile_number, cnic, address
+
+
+def update_student():
+    flag = False
+    print("*** UPDATE STUDENT ***")
+    student_id = input("Enter ID: ")
+    with open("students_data.json") as f:
+        data = json.load(f)
+        for course_name in data.keys():
+            for std_id in data[course_name].keys():
+                if student_id == std_id:
+                    student_name, father_name, mobile_number, cnic, address = take_input("update", student_id)
+                    not_exist = False
+                    flag = True
+                    break
+                else:
+                    not_exist = True
+            if flag:
+                break
+        if not_exist:
+            print(f"Invalid ID '{student_id}'")
+        else:
+            with open("students_data.json", "w") as f:
+                # course = data[course_name][student_id]["course"]
+                data[course_name][student_id]["name"] = student_name
+                data[course_name][student_id]["father name"] = father_name
+                data[course_name][student_id]["mobile no"] = mobile_number
+                data[course_name][student_id]["cnic"] = cnic
+                data[course_name][student_id]["address"] = address
+
+                json.dump(data, f)
+                print("*** Student Updated Successfully :) ***")
+
+
+def delete_student():
+    print("*** DELETE STUDENT ***")
+    print("1. Enter 1 to Delete a Single Student")
+    print("2. Enter 2 to Delete All Students of a Course")
+    print("3. Enter 3 to Delete All Students of All Courses")
     users_choice = get_users_choice()
     if users_choice == "1":
-        add_student()
+        print("Delete a Single Student")
     elif users_choice == "2":
-        print("Update")
+        print("Delete All Students of a Course")
     elif users_choice == "3":
-        print("Delete")
-    elif users_choice == "4":
-        print("View")
-    elif users_choice == "5":
-        print("\n\tTHANK YOU :)")
-        break
+        print("Delete All Students of All Courses")
     else:
         print("Invalid Input!")
+
+
+def start():
+    while True:
+        print("*** STUDENT MANAGEMENT SYSTEM ***")
+        print("1. Enter 1 To Add")
+        print("2. Enter 2 To Update")
+        print("3. Enter 3 To Delete")
+        print("4. Enter 4 To View")
+        print("5. Enter 5 To Exit")
+        print("*********************************")
+        users_choice = get_users_choice()
+        if users_choice == "1":
+            add_student()
+        elif users_choice == "2":
+            update_student()
+        elif users_choice == "3":
+            delete_student()
+        elif users_choice == "4":
+            print("View")
+        elif users_choice == "5":
+            print("\n\tTHANK YOU :)")
+            break
+        else:
+            print("Invalid Input!")
+
+
+start()
