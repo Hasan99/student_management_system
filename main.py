@@ -77,7 +77,6 @@ def generate_id(courses, course_number):
     student_id = courses[course_number]["prefix"]  # "AI"
     with open("students_data.json", "r") as f:
         data = json.load(f)
-        print("data:", data, "type:", type(data))
         prefix = courses[course_number]["prefix"].lower()
         list_of_students = data[prefix].keys()  # list_of_students = []
         number_of_students = len(list_of_students)
@@ -95,6 +94,15 @@ def generate_id(courses, course_number):
             return student_id
 
 
+def show_courses():
+    print("\nSelect any 1 from the following courses:")
+    print("\nEnter 1 for Artificial Intelligence")
+    print("Enter 2 for Blockchain")
+    print("Enter 3 for Cloud Computing\n")
+    course_number = get_users_choice()
+    return course_number
+
+
 def add_student():
     courses = {
         "1": {"prefix": "AI", "course_name": "Artificial Intelligence"},
@@ -104,15 +112,12 @@ def add_student():
 
     while True:
         print("\n*** ADD STUDENT ***")
-        print("\nSelect any 1 from the following courses:")
-        print("\nEnter 1 for Artificial Intelligence")
-        print("Enter 2 for Blockchain")
-        print("Enter 3 for Cloud Computing\n")
-        course_number = get_users_choice()
+        course_number = show_courses()
 
         if course_number in courses.keys():  # keys = ["1","2","3"]
             print("\nCourse:", courses[course_number]["course_name"])
             student_name, father_name, mobile_number, cnic, address = take_input("add")
+            break
         else:
             print(f"Invalid Course Number '{course_number}'")
             continue
@@ -169,6 +174,7 @@ def take_input(operation, student_id=""):  # student_id = "AI 1"
                     cnic = get_formatted_cnic(cnic)
                     if is_cnic_unique(cnic):
                         mobile_number, address = take_mobile_address()
+                        break
                     else:
                         if operation == "update":
                             with open("students_data.json") as f:
@@ -195,36 +201,72 @@ def take_input(operation, student_id=""):  # student_id = "AI 1"
     return student_name, father_name, mobile_number, cnic, address
 
 
-def update_student():
-    flag = False
-    print("*** UPDATE STUDENT ***")
+def is_id_found():
     student_id = input("Enter ID: ")
     with open("students_data.json") as f:
         data = json.load(f)
         for course_name in data.keys():
             for std_id in data[course_name].keys():
                 if student_id == std_id:
-                    student_name, father_name, mobile_number, cnic, address = take_input("update", student_id)
-                    not_exist = False
-                    flag = True
-                    break
+                    return True, data, course_name, student_id
                 else:
                     not_exist = True
-            if flag:
-                break
         if not_exist:
-            print(f"Invalid ID '{student_id}'")
-        else:
-            with open("students_data.json", "w") as f:
-                # course = data[course_name][student_id]["course"]
-                data[course_name][student_id]["name"] = student_name
-                data[course_name][student_id]["father name"] = father_name
-                data[course_name][student_id]["mobile no"] = mobile_number
-                data[course_name][student_id]["cnic"] = cnic
-                data[course_name][student_id]["address"] = address
+            return False, None, None, student_id
 
+
+def update_student():
+    print("*** UPDATE STUDENT ***")
+    is_found, data, course_name, student_id = is_id_found()
+    if is_found:
+        student_name, father_name, mobile_number, cnic, address = take_input("update", student_id)
+        with open("students_data.json", "w") as f:
+            # course = data[course_name][student_id]["course"]
+            data[course_name][student_id]["name"] = student_name
+            data[course_name][student_id]["father name"] = father_name
+            data[course_name][student_id]["mobile no"] = mobile_number
+            data[course_name][student_id]["cnic"] = cnic
+            data[course_name][student_id]["address"] = address
+
+            json.dump(data, f)
+            print("*** Student Updated Successfully :) ***")
+    else:
+        print(f"Invalid ID '{student_id}'")
+
+
+def delete_single_student():
+    is_found, data, course_name, student_id = is_id_found()
+    if is_found:
+        data[course_name].pop(student_id)
+        with open("students_data.json", "w") as f:
+            json.dump(data, f)
+            print("*** Student Deleted Successfully :) ***")
+    else:
+        print(f"Invalid ID '{student_id}'")
+
+
+def delete_students(course_name):
+    with open("students_data.json") as f:
+        data = json.load(f)
+        if len(data[course_name]) > 0:
+            data[course_name] = {}
+            with open("students_data.json", "w") as f:
                 json.dump(data, f)
-                print("*** Student Updated Successfully :) ***")
+                print(f"*** Deleted Students of {course_name.upper()} :) ***")
+        else:
+            print(f"No students in {course_name.upper()}")
+
+
+def delete_course_students():
+    course_number = show_courses()
+    if course_number == "1":
+        delete_students("ai")
+    elif course_number == "2":
+        delete_students("bc")
+    elif course_number == "3":
+        delete_students("cc")
+    else:
+        print("Invalid Choice!")
 
 
 def delete_student():
@@ -234,11 +276,40 @@ def delete_student():
     print("3. Enter 3 to Delete All Students of All Courses")
     users_choice = get_users_choice()
     if users_choice == "1":
-        print("Delete a Single Student")
+        delete_single_student()
     elif users_choice == "2":
-        print("Delete All Students of a Course")
+        delete_course_students()
     elif users_choice == "3":
         print("Delete All Students of All Courses")
+    else:
+        print("Invalid Input!")
+
+
+def is_student_available():
+    with open("students_data.json") as f:
+        data = json.load(f)
+        number_of_students = 0
+        for course in data.keys():
+            number_of_students = number_of_students + len(data[course])
+
+        if number_of_students > 0:
+            return True
+        else:
+            return False
+
+
+def view_student():
+    print("*** VIEW STUDENT ***")
+    print("1. Enter 1 to View a Single Student")
+    print("2. Enter 2 to View All Students of a Course")
+    print("3. Enter 3 to View All Students of All Courses")
+    users_choice = get_users_choice()
+    if users_choice == "1":
+        print("View a Single Student")
+    elif users_choice == "2":
+        print("View All Students of a Course")
+    elif users_choice == "3":
+        print("View All Students of All Courses")
     else:
         print("Invalid Input!")
 
@@ -256,12 +327,22 @@ def start():
         if users_choice == "1":
             add_student()
         elif users_choice == "2":
-            update_student()
+            if is_student_available():
+                update_student()
+            else:
+                print("Nothing to Update!")
         elif users_choice == "3":
-            delete_student()
+            if is_student_available():
+                delete_student()
+            else:
+                print("Nothing to Delete!")
         elif users_choice == "4":
-            print("View")
+            if is_student_available():
+                view_student()
+            else:
+                print("Nothing to Show!")
         elif users_choice == "5":
+            print("*** Saving your work ***")
             print("\n\tTHANK YOU :)")
             break
         else:

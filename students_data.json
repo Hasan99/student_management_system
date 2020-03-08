@@ -2,39 +2,21 @@
   "ai": {
     "AI 1": {
       "course": "Artificial Intelligence",
-      "name": "Laala",
-      "father name": "Afridi",
-      "mobile no": "0345-1234567",
+      "name": "Ali",
+      "father name": "Wali",
+      "mobile no": "0333-1234567",
       "cnic": "12345-1234567-1",
-      "address": "Q-123"
+      "address": "A-99"
     },
     "AI 2": {
       "course": "Artificial Intelligence",
-      "name": "Kashaf",
-      "father name": "Shair Khan",
+      "name": "Ali",
+      "father name": "Wali",
       "mobile no": "0333-1234567",
       "cnic": "12345-1234567-2",
-      "address": "a-765"
+      "address": "A-99"
     }
   },
-  "bc": {
-    "BC 1": {
-      "course": "Blockchain",
-      "name": "Abdul Kareem",
-      "father name": "Abdul Raheem",
-      "mobile no": "0333-2312311",
-      "cnic": "12345-1234567-3",
-      "address": "W-123"
-    }
-  },
-  "cc": {
-    "CC 1": {
-      "course": "Cloud Computing",
-      "name": "Yasir",
-      "father name": "Arafat",
-      "mobile no": "0900-7860122",
-      "cnic": "12345-1234567-6",
-      "address": "a-567"
-    }
-  }
+  "bc": {},
+  "cc": {}
 }
