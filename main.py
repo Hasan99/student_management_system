@@ -119,7 +119,7 @@ def add_student():
             student_name, father_name, mobile_number, cnic, address = take_input("add")
             break
         else:
-            print(f"Invalid Course Number '{course_number}'")
+            print(f"\n\tInvalid Course Number '{course_number}'!")
             continue
 
     student_id = generate_id(courses, course_number)
@@ -137,7 +137,7 @@ def add_student():
     with open("students_data.json", "w") as f:
         data[courses[course_number]["prefix"].lower()][student_id] = student
         json.dump(data, f)
-        print("\n*** Student Added Successfully :) ***")
+        print("\n\t*** Student Added Successfully :) ***")
 
 
 def get_formatted_cnic(cnic):  # cnic = "1234512345671"
@@ -155,10 +155,10 @@ def take_mobile_address():
             if is_address_valid(address):
                 break
             else:
-                print(f"Invalid Address '{address}'")
+                print(f"\n\tInvalid Address '{address}'!")
                 continue
         else:
-            print(f"Invalid Mobile No. '{mobile_number}'")
+            print(f"\n\tInvalid Mobile No. '{mobile_number}'!")
             continue
     return mobile_number, address
 
@@ -183,19 +183,19 @@ def take_input(operation, student_id=""):  # student_id = "AI 1"
                                     mobile_number, address = take_mobile_address()
                                     break
                                 else:
-                                    print(f"B. Form / CNIC '{cnic}' already exists!")
+                                    print(f"\n\tB. Form / CNIC '{cnic}' already exists!")
                                     continue
                         else:
-                            print(f"B. Form / CNIC '{cnic}' already exists!")
+                            print(f"\n\tB. Form / CNIC '{cnic}' already exists!")
                             continue
                 else:
-                    print(f"Invalid B. Form / CNIC '{cnic}'")
+                    print(f"\n\tInvalid B. Form / CNIC '{cnic}'!")
                     continue
             else:
-                print(f"Invalid Name '{father_name}'")
+                print(f"\n\tInvalid Name '{father_name}'!")
                 continue
         else:
-            print(f"Invalid Name '{student_name}'")
+            print(f"\n\tInvalid Name '{student_name}'!")
             continue
 
     return student_name, father_name, mobile_number, cnic, address
@@ -221,7 +221,6 @@ def update_student():
     if is_found:
         student_name, father_name, mobile_number, cnic, address = take_input("update", student_id)
         with open("students_data.json", "w") as f:
-            # course = data[course_name][student_id]["course"]
             data[course_name][student_id]["name"] = student_name
             data[course_name][student_id]["father name"] = father_name
             data[course_name][student_id]["mobile no"] = mobile_number
@@ -229,9 +228,9 @@ def update_student():
             data[course_name][student_id]["address"] = address
 
             json.dump(data, f)
-            print("*** Student Updated Successfully :) ***")
+            print("\n\t*** Student Updated Successfully :) ***")
     else:
-        print(f"Invalid ID '{student_id}'")
+        print(f"\n\tInvalid ID '{student_id}'!")
 
 
 def delete_single_student():
@@ -240,9 +239,9 @@ def delete_single_student():
         data[course_name].pop(student_id)
         with open("students_data.json", "w") as f:
             json.dump(data, f)
-            print("*** Student Deleted Successfully :) ***")
+            print("\n\t*** Student Deleted Successfully :) ***")
     else:
-        print(f"Invalid ID '{student_id}'")
+        print(f"\n\tInvalid ID '{student_id}'!")
 
 
 def delete_students(course_name):
@@ -252,9 +251,9 @@ def delete_students(course_name):
             data[course_name] = {}
             with open("students_data.json", "w") as f:
                 json.dump(data, f)
-                print(f"*** Deleted Students of {course_name.upper()} :) ***")
+                print(f"\n\t*** Deleted Students of {course_name.upper()} :) ***")
         else:
-            print(f"No students in {course_name.upper()}")
+            print(f"\n\tNo students in '{course_name.upper()}'!")
 
 
 def delete_course_students():
@@ -266,7 +265,7 @@ def delete_course_students():
     elif course_number == "3":
         delete_students("cc")
     else:
-        print("Invalid Choice!")
+        print("\n\tInvalid Choice!")
 
 
 def delete_student():
@@ -282,7 +281,7 @@ def delete_student():
     elif users_choice == "3":
         print("Delete All Students of All Courses")
     else:
-        print("Invalid Input!")
+        print("\n\tInvalid Input!")
 
 
 def is_student_available():
@@ -311,7 +310,7 @@ def view_student():
     elif users_choice == "3":
         print("View All Students of All Courses")
     else:
-        print("Invalid Input!")
+        print("\n\tInvalid Input!")
 
 
 def start():
@@ -330,23 +329,23 @@ def start():
             if is_student_available():
                 update_student()
             else:
-                print("Nothing to Update!")
+                print("\n\tNothing to Update!")
         elif users_choice == "3":
             if is_student_available():
                 delete_student()
             else:
-                print("Nothing to Delete!")
+                print("\n\tNothing to Delete!")
         elif users_choice == "4":
             if is_student_available():
                 view_student()
             else:
-                print("Nothing to Show!")
+                print("\n\tNothing to Show!")
         elif users_choice == "5":
-            print("*** Saving your work ***")
+            print("\n\t*** Saving your work ***")
             print("\n\tTHANK YOU :)")
             break
         else:
-            print("Invalid Input!")
+            print("\n\tInvalid Input!")
 
 
 start()
