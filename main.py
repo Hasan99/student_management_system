@@ -205,7 +205,7 @@ def is_id_found():
     student_id = input("Enter ID: ")
     with open("students_data.json") as f:
         data = json.load(f)
-        for course_name in data.keys():
+        for course_name in ["ai", "bc", "cc"]:
             for std_id in data[course_name].keys():
                 if student_id == std_id:
                     return True, data, course_name, student_id
@@ -268,6 +268,21 @@ def delete_course_students():
         print("\n\tInvalid Choice!")
 
 
+def delete_all_students():
+    password = input("Enter Password: ")
+    with open("students_data.json") as f:
+        data = json.load(f)
+        if data["admin_password"] == password:
+            data["ai"] = {}
+            data["bc"] = {}
+            data["cc"] = {}
+            with open("students_data.json", "w") as f:
+                json.dump(data, f)
+                print("*** Deleted All Students of All Courses Successfully :) ***")
+        else:
+            print(f"\n\tInvalid Password '{password}'!\n")
+
+
 def delete_student():
     print("*** DELETE STUDENT ***")
     print("1. Enter 1 to Delete a Single Student")
@@ -279,7 +294,7 @@ def delete_student():
     elif users_choice == "2":
         delete_course_students()
     elif users_choice == "3":
-        print("Delete All Students of All Courses")
+        delete_all_students()
     else:
         print("\n\tInvalid Input!")
 
@@ -288,13 +303,59 @@ def is_student_available():
     with open("students_data.json") as f:
         data = json.load(f)
         number_of_students = 0
-        for course in data.keys():
+        for course in ["ai", "bc", "cc"]:
             number_of_students = number_of_students + len(data[course])
 
         if number_of_students > 0:
             return True
         else:
             return False
+
+
+def view_single_student():
+    is_found, data, course_name, student_id = is_id_found()
+    if is_found:
+        print(f"\n*** Student Bearing ID '{student_id}' ***\n")
+        for key, value in data[course_name][student_id].items():
+            print(key.upper() if key == "cnic" else key.title(), ":", value.title())
+
+        print("\n*** Student Retrieved Successfully :) ***\n")
+    else:
+        print(f"\n\tInvalid ID '{student_id}'!\n")
+
+
+def view_students(course_name, call_print):
+    with open("students_data.json") as f:
+        data = json.load(f)
+        if len(data[course_name]) > 0:
+            print(f"\n*** Students of {course_name.upper()} ***\n")
+            print("ID | Name | Father Name | CNIC | Mobile No | Address\n")
+            for student_id, student in data[course_name].items():
+                print(student_id, "|", student["name"].title(), "|", student["father name"].title(), "|",
+                      student["cnic"], "|",
+                      student["mobile no"], "|", student["address"].title())
+            if call_print:
+                print("\n*** Students Retrieved Successfully :) ***\n")
+        else:
+            print(f"\n\tNo students in '{course_name.upper()}'!")
+
+
+def view_course_students():
+    course_number = show_courses()
+    if course_number == "1":
+        view_students("ai", True)
+    elif course_number == "2":
+        view_students("bc", True)
+    elif course_number == "3":
+        view_students("cc", True)
+    else:
+        print("\n\tInvalid Choice!")
+
+
+def view_all_students():
+    for course_name in ["ai", "bc", "cc"]:
+        view_students(course_name, False)
+    print("\n*** Students Retrieved Successfully :) ***\n")
 
 
 def view_student():
@@ -304,16 +365,28 @@ def view_student():
     print("3. Enter 3 to View All Students of All Courses")
     users_choice = get_users_choice()
     if users_choice == "1":
-        print("View a Single Student")
+        view_single_student()
     elif users_choice == "2":
-        print("View All Students of a Course")
+        view_course_students()
     elif users_choice == "3":
-        print("View All Students of All Courses")
+        view_all_students()
     else:
         print("\n\tInvalid Input!")
 
 
 def start():
+    import os
+    exists = os.path.exists(os.getcwd() + r"\students_data.json")
+    if not exists:
+        with open("students_data.json", "w") as f:
+            data = {
+                "admin_password": "admin123",
+                "ai": {},
+                "bc": {},
+                "cc": {}
+            }
+            json.dump(data, f)
+
     while True:
         print("*** STUDENT MANAGEMENT SYSTEM ***")
         print("1. Enter 1 To Add")
