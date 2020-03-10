@@ -1,0 +1,15 @@
+{
+  "admin_password": "admin123",
+  "ai": {
+    "AI 1": {
+      "course": "Artificial Intelligence",
+      "name": "Ali",
+      "father name": "Wali",
+      "mobile no": "0333-1234567",
+      "cnic": "12345-1234567-1",
+      "address": "A-33"
+    }
+  },
+  "bc": {},
+  "cc": {}
+}
